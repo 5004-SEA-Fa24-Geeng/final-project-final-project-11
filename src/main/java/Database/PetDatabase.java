@@ -36,17 +36,17 @@ public class PetDatabase {
         petList.add(new Pet("Pumpkin", "Hamster", "Winter White Dwarf Hamster", "Female", "ENFP", 2, 4.5, 7.0, true, false, 0.4, "images/pumpkin.jpg"));
         petList.add(new Pet("Daisy", "Dog", "Bulldog", "Female", "ESTP", 6, 50.0, 35.0, true, true, 2.5, "images/daisy.jpg"));
         petList.add(new Pet("Tiny", "Hamster", "Campbell's Dwarf Hamster", "Male", "INTP", 4, 5.0, 9.0, false, false, 0.4, "images/tiny.jpg"));
-        petList.add(new Pet("Zoe", "Cat", "Maine Coon", "Female", "ISFP", 7, 50.0, 35.0, false, false, 2.0, "images/zoe.jpg"));
+        petList.add(new Pet("Ziw", "Cat", "Maine Coon", "Female", "ISFP", 7, 50.0, 35.0, false, false, 2.0, "images/ziw.jpg"));
         petList.add(new Pet("Tiger", "Cat", "British Shorthair", "Female", "INTJ", 8, 45.0, 25.0, false, false, 2.0, "images/tiger.jpg"));
-        petList.add(new Pet("Gizmo", "Guinea Pig", "Peruvian", "Female", "INFP", 3, 6.0, 7.0, true, false, 0.4, "images/gizmo.jpg"));
+        petList.add(new Pet("Giz", "Guinea Pig", "Peruvian", "Female", "INFP", 3, 6.0, 7.0, true, false, 0.4, "images/giz.jpg"));
         petList.add(new Pet("Tommy", "Turtle", "Box Turtle", "Male", "INTJ", 3, 3.5, 4.0, false, false, 0.2, "images/tommy.jpg"));
-        petList.add(new Pet("Slither", "Snake", "Ball Python", "Male", "INTJ", 8, 5.0, 8.0, false, false, 1.0, "images/slither.jpg"));
+        petList.add(new Pet("Slit", "Snake", "Ball Python", "Male", "INTJ", 8, 5.0, 8.0, false, false, 1.0, "images/slit.jpg"));
         petList.add(new Pet("Sadie", "Dog", "Poodle", "Female", "INFP", 8, 55.0, 45.0, false, true, 2.0, "images/sadie.jpg"));
         petList.add(new Pet("Spike", "Lizard", "Bearded Dragon", "Female", "ISFJ", 6, 10.0, 15.0, false, false, 2.0, "images/spike.jpg"));
-        petList.add(new Pet("Cooper", "Dog", "Chihuahua", "Male", "ENFP", 5, 25.0, 20.0, false, true, 2.5, "images/cooper.jpg"));
+        petList.add(new Pet("Coop", "Dog", "Chihuahua", "Male", "ENFP", 5, 25.0, 20.0, false, true, 2.5, "images/coop.jpg"));
         petList.add(new Pet("Maggie", "Parrot", "Cockatoo", "Female", "ENFJ", 7, 12.0, 18.0, false, false, 2.0, "images/maggie.jpg"));
-        petList.add(new Pet("Rocky", "Hamster", "Roborovski Dwarf Hamster", "Male", "ENFP", 3, 5.0, 8.0, true, false, 0.4, "images/rocky.jpg"));
-        petList.add(new Pet("Sunny", "Parrot", "Macaw", "Female", "ENFJ", 7, 15.0, 20.0, false, false, 2.0, "images/sunny.jpg"));
+        petList.add(new Pet("Rock", "Hamster", "Roborovski Dwarf Hamster", "Male", "ENFP", 3, 5.0, 8.0, true, false, 0.4, "images/rock.jpg"));
+        petList.add(new Pet("Windy", "Parrot", "Macaw", "Female", "ENFJ", 7, 15.0, 20.0, false, false, 2.0, "images/windy.jpg"));
         petList.add(new Pet("Penny", "Guinea Pig", "Peruvian", "Female", "INFP", 3, 5.5, 6.5, true, false, 0.5, "images/penny.jpg"));
     }
 
