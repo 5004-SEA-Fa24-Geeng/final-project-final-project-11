@@ -1,6 +1,10 @@
 package model;
 
 import Database.PetDatabase;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -10,28 +14,54 @@ import java.util.List;
  */
 public class PetFilter implements IPetFilter {
 
+    private final String csvPath;
+
+    public PetFilter(String csvPath) {
+        this.csvPath = csvPath;
+    }
+
     @Override
     public List<Pet> filterPetsByCompatibility(List<Pet> pets) {
-        // TODO: Step 1: Initialize an empty list to store pets with compatibility > 85%.
+        List<PetWithScore> filteredPets = new ArrayList<>();
 
-        // TODO: Step 2: Read through the CSV file containing pets and their compatibility scores.
-        // - Open and read the "output/pet_compatibility.csv" file.
-        // - Iterate through the file and extract each pet's compatibility score.
-        // - Maintain the order of the pets as they appear in the CSV, which is already sorted by compatibility score
-        //   and includes tie-breaking logic.
+        try (BufferedReader reader = new BufferedReader(new FileReader(csvPath))) {
+            // Skip header line
+            String line = reader.readLine();
 
-        // TODO: Step 3: Filter pets with compatibility > 80%.
-        // - For each pet, check if its compatibility score is greater than 80%.
-        // - If the pet's score is greater than 85%, add it to the filtered list.
-        // - Ensure the filtered list preserves the order from the CSV, which already includes tie-breaking logic.
+            // Read each pet from the CSV
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split(",");
+                if (parts.length < 5) continue; // Skip invalid rows
 
-        // TODO: Step 4: Return the filtered list of pets.
-        // - Return the list that contains only pets with compatibility > 85%.
-        // - The list should preserve the order and tie-breaking rules applied by PetSorter.
+                String name = parts[0];
+                String breed = parts[1];
+                String type = parts[2];
+                String scoreStr = parts[3].replace("%", ""); // Remove % sign
+                String imagePath = parts[4];
 
-        // TODO: Step 5: Ask ConsoleController to print the filtered pets' details.
-        // - Pass the filtered list to ConsoleController's method to print the name, breed, score, and image path of each filtered pet.
+                // Parse score and check if it's > 80%
+                double score = Double.parseDouble(scoreStr) / 100.0; // Convert to decimal
 
-        return null;  // Placeholder return, to be implemented later
+                if (score > 0.80) {
+                    // Find the corresponding Pet object from the list
+                    for (Pet pet : pets) {
+                        if (pet.getName().equals(name) && pet.getBreed().equals(breed)) {
+                            filteredPets.add(new PetWithScore(pet, score));
+                            break;
+                        }
+                    }
+                }
+            }
+        } catch (IOException e) {
+            System.err.println("Error reading CSV file: " + e.getMessage());
+        }
+
+        // Extract and return just the Pet objects
+        List<Pet> result = new ArrayList<>();
+        for (PetWithScore petWithScore : filteredPets) {
+            result.add(petWithScore.getPet());
+        }
+
+        return result;
     }
 }

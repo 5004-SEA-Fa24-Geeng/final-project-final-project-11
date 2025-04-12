@@ -1,6 +1,10 @@
 package model;
 
 import controller.ConsoleController;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -11,9 +15,11 @@ import java.util.List;
 public class PetSearcher implements IPetSearcher {
 
     private final ConsoleController consoleController;
+    private final List<Pet> petDatabase;
 
     public PetSearcher(ConsoleController consoleController) {
         this.consoleController = consoleController;
+        this.petDatabase = Database.PetDatabase.getAllPets();
     }
 
     /**
@@ -23,12 +29,51 @@ public class PetSearcher implements IPetSearcher {
      * @param petBreed optional breed (can be empty to match all breeds of that type)
      * @param csvPath  the CSV file written by PetSorter
      */
+    @Override
     public void searchAndDisplay(String petType, String petBreed, String csvPath) {
-        // TODO: Step 1: Read the CSV file located at csvPath.
-        // TODO: Step 2: Parse each pet's data from each line.
-        // TODO: Step 3: Check if the pet matches the given type (case-insensitive).
-        //              If breed is non-empty, also check for breed match.
-        // TODO: Step 4: Create PetWithScore objects for matched pets.
-        // TODO: Step 5: Call consoleController.displaySearchResult(matchingPets) to display results.
+        List<PetWithScore> matchingPets = new ArrayList<>();
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(csvPath))) {
+            // Skip header line
+            String header = reader.readLine();
+
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split(",");
+                if (parts.length < 5) continue; // Skip invalid rows
+
+                String name = parts[0];
+                String breed = parts[1];
+                String type = parts[2];
+                String scoreStr = parts[3].replace("%", ""); // Remove % sign
+                String imagePath = parts[4];
+
+                // Case-insensitive comparison for type
+                if (!type.equalsIgnoreCase(petType)) {
+                    continue;
+                }
+
+                // Check breed if provided
+                if (petBreed != null && !petBreed.isEmpty() && !breed.equalsIgnoreCase(petBreed)) {
+                    continue;
+                }
+
+                // Parse score
+                double score = Double.parseDouble(scoreStr) / 100.0; // Convert to decimal
+
+                // Find the corresponding Pet object from the database
+                for (Pet pet : petDatabase) {
+                    if (pet.getName().equals(name) && pet.getBreed().equals(breed)) {
+                        matchingPets.add(new PetWithScore(pet, score));
+                        break;
+                    }
+                }
+            }
+        } catch (IOException e) {
+            System.err.println("Error reading CSV file: " + e.getMessage());
+        }
+
+        // Display search results
+        consoleController.displaySearchResult(matchingPets);
     }
 }

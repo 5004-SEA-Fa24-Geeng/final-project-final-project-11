@@ -1,6 +1,10 @@
 package model;
 
-import Database.PetDatabase;
+import controller.ConsoleController;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -9,36 +13,78 @@ import java.util.*;
  * The class follows these steps:
  * 1. Read the CSV file containing pet data and their compatibility scores.
  * 2. Return the first pet from the sorted list (the best match).
- * 3. If the first pet’s compatibility score is below 75%, suggest that it might not be the best time for the user to get a pet.
+ * 3. If the first pet's compatibility score is below 80%, suggest that it might not be the best time for the user to get a pet.
  * 4. After identifying the best match, display the pet's info and open the image on the console.
  */
 public class PetMatcher implements IPetMatcher {
 
+//    private final ConsoleController consoleController;
+    private final List<Pet> petDatabase;
+
+    public PetMatcher(List<Pet> petDatabase) {
+//        this.consoleController = consoleController;
+        this.petDatabase = petDatabase;
+    }
+
     /**
      * This method reads the pets' data from a CSV file, sorts them by compatibility score, and returns the best match.
-     * If the first pet's compatibility score is below 75%, a message will be printed to suggest that it might not be
+     * If the first pet's compatibility score is below 80%, a message will be printed to suggest that it might not be
      * the best time for the user to get a pet.
      *
      * @param user The user for whom the best match pet is being sought.
      * @param csvFilePath The path to the CSV file containing the pet data and their compatibility scores.
-     * @return The pet with the highest compatibility score.
+     * @return The pet with the highest compatibility score or null if no match is found.
      */
     @Override
     public Pet sortAndEvaluateBestMatch(User user, String csvFilePath) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(csvFilePath))) {
+            // Skip header line
+            String header = reader.readLine();
 
-        // TODO: Step 1: Read the CSV file containing pets and their compatibility scores.
-        // - Use BufferedReader to read the file.
-        // - Parse each line to get pet details (name, breed, score, image path).
+            // Read the first line (best match)
+            String line = reader.readLine();
 
-        // TODO: Step 2:Find the pets by compatibility score.
-        // - The first pet in the sorted list is the best match.
+            // If no lines were found, return null
+            if (line == null) {
+                return null;
+            }
 
-        // TODO: Step 3: Check if the compatibility score of the first pet is below 80%.
-        // - If it is, print a message suggesting that it might not be the best time for the user to get a pet.
+            // Parse the line
+            String[] parts = line.split(",");
+            if (parts.length < 5) {
+                System.err.println("Invalid CSV format");
+                return null;
+            }
 
-        // TODO: Step 4: Return the first pet (the best match).
-        // - Return the pet with the highest compatibility score (first in the sorted list).
+            String name = parts[0];
+            String breed = parts[1];
+            String scoreStr = parts[3].replace("%", ""); // Remove % sign
 
-        return null;
+            // Parse score
+            double score = Double.parseDouble(scoreStr) / 100.0; // Convert to decimal
+
+            // Find the corresponding Pet object from the database
+            Pet bestMatchPet = null;
+            for (Pet pet : petDatabase) {
+                if (pet.getName().equals(name) && pet.getBreed().equals(breed)) {
+                    bestMatchPet = pet;
+                    break;
+                }
+            }
+
+            // If no matching pet was found or  if score is below threshold
+            if (bestMatchPet == null || score < 0.80) {
+                return null;
+            }
+
+            // Display the best match
+//            consoleController.displayBestMatch(new PetWithScore(bestMatchPet, score));
+
+            return bestMatchPet;
+
+        } catch (IOException e) {
+            System.err.println("Error reading CSV file: " + e.getMessage());
+            return null;
+        }
     }
 }

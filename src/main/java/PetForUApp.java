@@ -3,6 +3,7 @@ import controller.ConsoleController;
 import Database.PetDatabase;
 import model.*;
 
+import java.io.File;
 import java.util.List;
 import java.util.Scanner;
 
@@ -57,15 +58,20 @@ public final class PetForUApp {
             User user = new User(userGender, preferredPetGender, mbti, energyLevel,
                     space, budget, allergy == 1, hasYard == 1, timePerDay);
 
+            // Create output directory if it doesn't exist
+            new File("output").mkdirs();
+
             // Load pets from PetDatabase
             List<Pet> pets = PetDatabase.getAllPets();
 
+            // Calculate compatibility and sort
+            System.out.println("\nCalculating pet compatibility...");
             CompatibilityCalculator calculator = new CompatibilityCalculator();
             PetSorter sorter = new PetSorter(user, calculator);
-            sorter.sortAndExportToCSV(pets, "output/pet_compatibility.csv");
+            String csvPath = "output/pet_compatibility.csv";
+            sorter.sortAndExportToCSV(pets, csvPath);
 
             ConsoleController consoleController = new ConsoleController(user, calculator);
-            String csvPath = "output/pet_compatibility.csv";
 
             boolean running = true;
             while (running) {
@@ -94,7 +100,7 @@ public final class PetForUApp {
                         String petType = scanner.nextLine().trim();
 
                         // Ask for breed, based on pet type
-                        System.out.print("Enter the breed of the pet (Leave empty for any breed). Example breeds: Labrador Retriever, Persian: ");
+                        System.out.print("Enter the breed of the pet (Leave empty for any breed): ");
                         String petBreed = scanner.nextLine().trim();
 
                         PetSearcher petSearcher = new PetSearcher(consoleController);
@@ -104,6 +110,8 @@ public final class PetForUApp {
                     default -> System.out.println("Invalid option. Please choose 1, 2, 3, 4, or Q.");
                 }
             }
+
+            System.out.println("Thank you for using PetMatcher! Goodbye!");
 
         } catch (Exception e) {
             System.err.println("Error: " + e.getMessage());

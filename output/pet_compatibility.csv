@@ -1,0 +1,33 @@
+Name,Breed,Type,Score,ImagePath
+Bella,Beagle,Dog,94%,images/bella.jpg
+Tiger,British Shorthair,Cat,92%,images/tiger.jpg
+Spike,Bearded Dragon,Lizard,92%,images/spike.jpg
+Zoe,Maine Coon,Cat,88%,images/zoe.jpg
+Slither,Ball Python,Snake,87%,images/slither.jpg
+Slither,Ball Python,Snake,87%,images/slither.jpg
+Max,Rottweiler,Dog,87%,images/max.jpg
+Shelly,Red-eared Slider,Turtle,86%,images/shelly.jpg
+Daisy,Bulldog,Dog,86%,images/daisy.jpg
+Misty,Bengal,Cat,86%,images/misty.jpg
+Squeaky,Dumbo Rat,Rat,85%,images/squeaky.jpg
+Shelly,American,Guinea Pig,84%,images/shelly.jpg
+Tommy,Box Turtle,Turtle,83%,images/tommy.jpg
+Maggie,Cockatoo,Parrot,81%,images/maggie.jpg
+Sunny,Macaw,Parrot,81%,images/sunny.jpg
+Sunny,Macaw,Parrot,81%,images/sunny.jpg
+Whiskers,Fancy Rat,Rat,81%,images/whiskers.jpg
+Sadie,Poodle,Dog,80%,images/sadie.jpg
+Kiki,African Grey,Parrot,80%,images/kiki.jpg
+Charlie,Golden Retriever,Dog,80%,images/charlie.jpg
+Tiny,Campbell's Dwarf Hamster,Hamster,78%,images/tiny.jpg
+Penny,Peruvian,Guinea Pig,75%,images/penny.jpg
+Gizmo,Peruvian,Guinea Pig,75%,images/gizmo.jpg
+Milo,Siamese,Cat,73%,images/milo.jpg
+Gizmo,Abyssinian,Guinea Pig,73%,images/gizmo.jpg
+Cooper,Beagle,Dog,70%,images/cooper.jpg
+Zoe,Syrian Hamster,Hamster,69%,images/zoe.jpg
+Bubbles,Goldfish,Fish,69%,images/bubbles.jpg
+Pumpkin,Winter White Dwarf Hamster,Hamster,68%,images/pumpkin.jpg
+Cooper,Chihuahua,Dog,67%,images/cooper.jpg
+Rocky,Roborovski Dwarf Hamster,Hamster,64%,images/rocky.jpg
+Rocky,Roborovski Dwarf Hamster,Hamster,64%,images/rocky.jpg
