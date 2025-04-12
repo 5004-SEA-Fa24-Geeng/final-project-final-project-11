@@ -97,9 +97,8 @@ public final class PetForUApp {
                         System.out.print("Enter the breed of the pet (Leave empty for any breed). Example breeds: Labrador Retriever, Persian: ");
                         String petBreed = scanner.nextLine().trim();
 
-                        // Pass the pet type and breed to ConsoleController (via PetSearcher)
-                        PetSearcher petSearcher = new PetSearcher();
-                        petSearcher.searchAndDisplay(petType, petBreed, csvPath, consoleController);
+                        PetSearcher petSearcher = new PetSearcher(consoleController);
+                        petSearcher.searchAndDisplay(petType, petBreed, csvPath);
                     }
                     case "Q", "q" -> running = false;
                     default -> System.out.println("Invalid option. Please choose 1, 2, 3, 4, or Q.");
