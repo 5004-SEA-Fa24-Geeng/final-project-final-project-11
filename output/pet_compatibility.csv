@@ -1,11 +1,11 @@
 Name,Breed,Type,Score,ImagePath
 Bella,Beagle,Dog,94%,images/bella.jpg
-Tiger,British Shorthair,Cat,92%,images/tiger.jpg
 Spike,Bearded Dragon,Lizard,92%,images/spike.jpg
+Tiger,British Shorthair,Cat,92%,images/tiger.jpg
 Zoe,Maine Coon,Cat,88%,images/zoe.jpg
-Slither,Ball Python,Snake,87%,images/slither.jpg
-Slither,Ball Python,Snake,87%,images/slither.jpg
 Max,Rottweiler,Dog,87%,images/max.jpg
+Slither,Ball Python,Snake,87%,images/slither.jpg
+Slither,Ball Python,Snake,87%,images/slither.jpg
 Shelly,Red-eared Slider,Turtle,86%,images/shelly.jpg
 Daisy,Bulldog,Dog,86%,images/daisy.jpg
 Misty,Bengal,Cat,86%,images/misty.jpg
