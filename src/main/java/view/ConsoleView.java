@@ -2,11 +2,9 @@ package view;
 
 import model.*;
 
-import java.util.*;
-
 public class ConsoleView {
 
-    public UserProfile getUserProfileFromInput() {
+    public User getUserProfileFromInput() {
         // TODO: Implement questionnaire to collect:
 
         // - Energy level (1-10)
