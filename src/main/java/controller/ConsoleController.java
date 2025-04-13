@@ -153,6 +153,7 @@ public class ConsoleController {
             Pet pet = petWithScore.getPet();
             System.out.println(count + ". " + pet.getName() + " (" + pet.getType() + " - " + pet.getBreed() + ")");
             System.out.println("   Compatibility: " + formatPercentage(petWithScore.getScore()));
+            displayPetDetails(pet);
             System.out.println(SECTION_SEPARATOR);
             count++;
 
