@@ -17,15 +17,31 @@ public class PetSearcher implements IPetSearcher {
     private final ConsoleController consoleController;
     private final List<Pet> petDatabase;
 
+    /**
+     * Default constructor that uses the system pet database.
+     *
+     * @param consoleController the console controller for displaying results
+     */
     public PetSearcher(ConsoleController consoleController) {
         this.consoleController = consoleController;
         this.petDatabase = Database.PetDatabase.getAllPets();
     }
 
     /**
+     * Constructor with injectable pet database for testing.
+     *
+     * @param consoleController the console controller for displaying results
+     * @param petDatabase a list of pets to use instead of the system database
+     */
+    public PetSearcher(ConsoleController consoleController, List<Pet> petDatabase) {
+        this.consoleController = consoleController;
+        this.petDatabase = petDatabase;
+    }
+
+    /**
      * Searches for pets by type and optional breed and sends results to the console.
      *
-     * @param petType  the pet type to search for (e.g., Dog, Cat)
+     * @param petType  the type of pet to search for (e.g., Dog, Cat)
      * @param petBreed optional breed (can be empty to match all breeds of that type)
      * @param csvPath  the CSV file written by PetSorter
      */
@@ -58,15 +74,20 @@ public class PetSearcher implements IPetSearcher {
                     continue;
                 }
 
-                // Parse score
-                double score = Double.parseDouble(scoreStr) / 100.0; // Convert to decimal
+                try {
+                    // Parse score
+                    double score = Double.parseDouble(scoreStr) / 100.0; // Convert to decimal
 
-                // Find the corresponding Pet object from the database
-                for (Pet pet : petDatabase) {
-                    if (pet.getName().equals(name) && pet.getBreed().equals(breed)) {
-                        matchingPets.add(new PetWithScore(pet, score));
-                        break;
+                    // Find the corresponding Pet object from the database
+                    for (Pet pet : petDatabase) {
+                        if (pet.getName().equals(name) && pet.getBreed().equals(breed)) {
+                            matchingPets.add(new PetWithScore(pet, score));
+                            break;
+                        }
                     }
+                } catch (NumberFormatException e) {
+                    System.err.println("Invalid score format: " + scoreStr);
+                    // Continue processing other entries
                 }
             }
         } catch (IOException e) {

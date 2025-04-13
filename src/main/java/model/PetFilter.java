@@ -22,6 +22,11 @@ public class PetFilter implements IPetFilter {
 
     @Override
     public List<Pet> filterPetsByCompatibility(List<Pet> pets) {
+        // Add the null check
+        if (pets == null) {
+            return new ArrayList<>();
+        }
+
         List<PetWithScore> filteredPets = new ArrayList<>();
 
         try (BufferedReader reader = new BufferedReader(new FileReader(csvPath))) {
