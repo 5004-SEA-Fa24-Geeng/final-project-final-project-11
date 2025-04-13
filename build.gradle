@@ -24,6 +24,11 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.10.2'
     testImplementation 'org.junit.platform:junit-platform-launcher:1.10.2'
 
+    // Add Mockito Dependency
+    testImplementation 'org.mockito:mockito-core:3.12.4' // or the latest version
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0' // or the latest version
+    testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+
     // optional, left these in here in case you wanted to use them.
     implementation 'com.github.javaparser:javaparser-symbol-solver-core:3.25.3'
     implementation 'org.apache.commons:commons-lang3:3.14.0'
