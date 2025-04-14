@@ -37,11 +37,11 @@ public final class PetForUApp {
             String preferredPetGender = scanner.nextLine();
 
             int energyLevel = askPositiveInt(scanner, "Your personal energy level (1 to 10): ");
-            double space = askPositiveDouble(scanner, "Space available in square feet: ");
+            double space = askPositiveDouble(scanner, "Space available for your new pet in square feet: ");
             double budget = askPositiveDouble(scanner, "Monthly pet care budget in USD: ");
             int allergy = askYesNo(scanner, "Do you or anyone in your home have pet allergies?");
             int hasYard = askYesNo(scanner, "Do you have a yard or outdoor space?");
-            double timePerDay = askPositiveDouble(scanner, "Time available per day (hours): ");
+            double timePerDay = askPositiveDouble(scanner, "Time available for your new pet per day (hours): ");
 
             PetManager manager = new PetManager(
                     userGender, preferredPetGender,

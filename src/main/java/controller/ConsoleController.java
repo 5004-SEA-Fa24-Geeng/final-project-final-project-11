@@ -232,6 +232,8 @@ public class ConsoleController {
             System.out.println(count + ". " + pet.getName() + " (" + pet.getType() + " - " + pet.getBreed() + ")");
             System.out.println("   Compatibility: " + formatPercentage(petWithScore.getScore()));
             System.out.println(SECTION_SEPARATOR);
+            displayPetDetails(pet);
+            System.out.println(LINE_SEPARATOR);
             count++;
 
             // Open the image
