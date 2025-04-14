@@ -1,5 +1,8 @@
 import Database.PetDatabase;
 import controller.ArgsController;
+import controller.PetManager;
+import controller.ConsoleController;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -11,6 +14,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.InputStream;
 import java.io.PrintStream;
+import java.util.Scanner;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -43,83 +47,49 @@ public class PetForUAppTest {
 
     @Test
     public void testArgsControllerHelp() {
-        // Arrange
         String[] args = {"--help"};
         ArgsController controller = new ArgsController(args);
-
-        // Act
-        boolean isHelp = controller.isHelp();
-        String helpText = controller.getHelp();
-
-        // Assert
-        assertTrue(isHelp, "Should detect help flag");
-        assertNotNull(helpText, "Help text should not be null");
-        assertTrue(helpText.contains("Usage") && helpText.contains("Options"),
-                "Help text should contain usage information");
+        assertTrue(controller.isHelp());
+        assertNotNull(controller.getHelp());
+        assertTrue(controller.getHelp().contains("Usage") && controller.getHelp().contains("Options"));
     }
 
     @Test
     public void testArgsControllerNoHelp() {
-        // Arrange
         String[] args = {};
         ArgsController controller = new ArgsController(args);
-
-        // Act
-        boolean isHelp = controller.isHelp();
-
-        // Assert
-        assertFalse(isHelp, "Should not detect help flag");
+        assertFalse(controller.isHelp());
     }
 
     @Test
     public void testPetDatabaseGetAllPets() {
-        // Act
         var pets = PetDatabase.getAllPets();
-
-        // Assert
-        assertNotNull(pets, "Pet list should not be null");
-        assertFalse(pets.isEmpty(), "Pet list should not be empty");
+        assertNotNull(pets);
+        assertFalse(pets.isEmpty());
     }
 
     @Test
     public void testMainMethodWithHelpArgs() {
-        // Arrange - mock command line args
         String[] args = {"--help"};
-
-        // Act
         PetForUApp.main(args);
-
-        // Assert
         String output = outContent.toString();
-        assertTrue(output.contains("Usage") && output.contains("Options"),
-                "Output should contain help information");
+        assertTrue(output.contains("Usage") && output.contains("Options"));
     }
 
     @Test
     public void testMainMethodInteractiveMode() {
-        // This test is more complex as it simulates user interaction
-        // We'll only test a minimal path that exits quickly
-
-        // Arrange - mock user input for MBTI questions, then quit
         String input = String.join(System.lineSeparator(),
-                "Y", "Y", "Y", "Y",              // MBTI questions (ISTJ)
-                "Male", "Any",                   // Gender preferences
-                "5", "400", "100", "N", "Y", "3", // Other user details
-                "Q"                              // Quit immediately
-        );
-
+                "Y", "Y", "Y", "Y",
+                "Male", "Any",
+                "5", "400", "100", "N", "Y", "3",
+                "Q");
         System.setIn(new ByteArrayInputStream(input.getBytes()));
 
-        // Act
         try {
             PetForUApp.main(new String[]{});
-
-            // Assert
             String output = outContent.toString();
-            assertTrue(output.contains("Welcome to PetMatcher"),
-                    "Output should contain welcome message");
-            assertTrue(output.contains("Menu:") && output.contains("View best matched pet"),
-                    "Output should show menu");
+            assertTrue(output.contains("Welcome to PetMatcher"));
+            assertTrue(output.contains("Menu:") && output.contains("View best matched pet"));
         } catch (Exception e) {
             fail("Main method threw exception: " + e.getMessage());
         }
@@ -127,31 +97,146 @@ public class PetForUAppTest {
 
     @Test
     public void testOutputDirectoryCreation() {
-        // Arrange - Delete output directory if it exists
         File outputDir = new File("output");
         if (outputDir.exists()) {
-            for (File file : outputDir.listFiles()) {
-                file.delete();
-            }
+            for (File file : outputDir.listFiles()) file.delete();
             outputDir.delete();
         }
 
-        // Arrange user input (same as above)
         String input = String.join(System.lineSeparator(),
-                "Y", "Y", "Y", "Y",              // MBTI questions
-                "Male", "Any",                   // Gender
-                "5", "400", "100", "N", "Y", "3", // Details
-                "Q"                              // Quit
-        );
-
+                "Y", "Y", "Y", "Y",
+                "Male", "Any",
+                "5", "400", "100", "N", "Y", "3",
+                "Q");
         System.setIn(new ByteArrayInputStream(input.getBytes()));
 
-        // Act
         PetForUApp.main(new String[]{});
 
-        // Assert
-        assertTrue(outputDir.exists(), "Output directory should be created");
-        assertTrue(new File("output/pet_compatibility.csv").exists(),
-                "CSV file should be created");
+        assertTrue(outputDir.exists());
+        assertTrue(new File("output/pet_compatibility.csv").exists());
+    }
+
+    @Test
+    public void testSwitchCase1234Paths() {
+        // Simulate user selecting 1, 2, 3, then 4 with type and breed, and finally Q to quit
+        String simulatedInput = String.join("\n",
+                "1", // Best match
+                "2", // Recommended pets
+                "3", // All pets
+                "4", // Search
+                "Dog", // type input for 4
+                "",    // breed input for 4
+                "Q"   // quit
+        ) + "\n";
+
+        InputStream originalIn = System.in;
+        System.setIn(new ByteArrayInputStream(simulatedInput.getBytes()));
+
+        // Create a manager with sample inputs
+        PetManager manager = new PetManager("Male", "Any", 1, 1, 1, 1,
+                5, 50.0, 30.0, false, true, 2.0);
+
+        ConsoleController consoleController = new ConsoleController(manager.getUser(), new model.CompatibilityCalculator());
+
+        // Run the menu
+        boolean running = true;
+        Scanner scanner = new Scanner(System.in);
+        while (running) {
+            System.out.println("\nMenu:");
+            System.out.println("1. View best matched pet");
+            System.out.println("2. View recommended pets (80%+ compatibility)");
+            System.out.println("3. View all pets with compatibility scores");
+            System.out.println("4. Search for a pet by type or breed");
+            System.out.println("Q. Quit");
+
+            System.out.print("Your choice: ");
+            String input = scanner.nextLine().trim();
+
+            switch (input) {
+                case "1" -> consoleController.displayBestMatch(manager.getCsvPath());
+                case "2" -> consoleController.displayRecommendedPets(manager.getCsvPath());
+                case "3" -> consoleController.displayAllPetsWithScores(manager.getCsvPath());
+                case "4" -> {
+                    System.out.print("Enter the pet type (Dog, Cat, Hamster, Parrot): ");
+                    String petType = scanner.nextLine().trim();
+
+                    System.out.print("Enter the breed of the pet (e.g., Syrian, Goldfish, Labrador — leave empty for any breed): ");
+                    String petBreed = scanner.nextLine().trim();
+
+                    model.PetSearcher petSearcher = new model.PetSearcher(consoleController);
+                    petSearcher.searchAndDisplay(petType, petBreed, manager.getCsvPath());
+                }
+                case "Q", "q" -> running = false;
+                default -> System.out.println("Invalid option.");
+            }
+        }
+
+        System.setIn(originalIn);
+        System.setOut(originalOut);
+
+        String output = outContent.toString();
+
+        // Confirm all 4 menu actions were triggered — check presence of known phrases (light check only)
+        assertTrue(output.contains("YOUR BEST PET MATCH")
+                || output.contains("LOW COMPATIBILITY MATCH")
+                || output.contains("NO COMPATIBLE PETS FOUND"));
+
+        assertTrue(output.contains("HIGHLY COMPATIBLE PETS")
+                || output.contains("NO COMPATIBLE PETS FOUND"));
+
+        assertTrue(output.contains("ALL PETS WITH COMPATIBILITY SCORES"));
+
+        assertTrue(output.contains("SEARCH RESULTS")
+                || output.contains("NO SEARCH RESULTS"));
+    }
+
+    @Test
+    public void testInvalidSwitchCase() {
+        String input = String.join(System.lineSeparator(),
+                "Y", "Y", "Y", "Y",
+                "Male", "Any",
+                "5", "400", "100", "N", "Y", "3",
+                "Z", "Q");
+        System.setIn(new ByteArrayInputStream(input.getBytes()));
+
+        PetForUApp.main(new String[]{});
+
+        String output = outContent.toString();
+        assertTrue(output.contains("Invalid option"));
+    }
+
+    @Test
+    public void testAskYesNoInvalidEntry() {
+        String input = String.join(System.lineSeparator(),
+                "maybe", "Y",
+                "Y", "Y", "Y",
+                "Male", "Any",
+                "5", "400", "100", "N", "Y", "3",
+                "Q");
+        System.setIn(new ByteArrayInputStream(input.getBytes()));
+
+        PetForUApp.main(new String[]{});
+
+        String output = outContent.toString();
+        assertTrue(output.contains("Please enter 'Y' or 'N'."));
+    }
+
+    @Test
+    public void testAskPositiveIntInvalidEntry() {
+        String input = String.join(System.lineSeparator(),
+                "Y", "Y", "Y", "Y",
+                "Male", "Any",
+                "-5", "5",
+                "-10", "100",
+                "abc", "100",
+                "N", "Y", "3",
+                "Q");
+        System.setIn(new ByteArrayInputStream(input.getBytes()));
+
+        PetForUApp.main(new String[]{});
+
+        String output = outContent.toString();
+        assertTrue(output.contains("Please enter a positive number."));
+        assertTrue(output.contains("Invalid input. Please enter a positive number."));
     }
 }
