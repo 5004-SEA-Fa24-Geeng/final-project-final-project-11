@@ -1,0 +1,51 @@
+Name,Breed,Type,Score,ImagePath
+Coco,Conure,Parrot,92%,images/coco.jpg
+Maggie,Cockatoo,Parrot,88%,images/maggie.jpg
+Sunny,Macaw,Parrot,88%,images/sunny.jpg
+Windy,Macaw,Parrot,88%,images/windy.jpg
+Nemo,Betta,Fish,86%,images/nemo.jpg
+Spike,Bearded Dragon,Lizard,86%,images/spike.jpg
+Tiger,British Shorthair,Cat,86%,images/tiger.jpg
+Slit,Ball Python,Snake,86%,images/slit.jpg
+Slither,Ball Python,Snake,86%,images/slither.jpg
+Loki,Oriental Shorthair,Cat,86%,images/loki.jpg
+Gizmo,Abyssinian,Guinea Pig,85%,images/gizmo.jpg
+Basil,Corn Snake,Snake,85%,images/basil.jpg
+Ruby,Lovebird,Parrot,85%,images/ruby.jpg
+Dusty,Lop,Rabbit,83%,images/dusty.jpg
+Shelly,American,Guinea Pig,83%,images/shelly.jpg
+Snowy,Netherland Dwarf,Rabbit,83%,images/snowy.jpg
+Flame,Leopard Gecko,Lizard,83%,images/flame.jpg
+Max,Rottweiler,Dog,83%,images/max.jpg
+Daisy,Bulldog,Dog,82%,images/daisy.jpg
+Tommy,Box Turtle,Turtle,82%,images/tommy.jpg
+Ziw,Maine Coon,Cat,81%,images/ziw.jpg
+Shelly,Red-eared Slider,Turtle,80%,images/shelly.jpg
+Whiskers,Fancy Rat,Rat,80%,images/whiskers.jpg
+Misty,Bengal,Cat,80%,images/misty.jpg
+Squeaky,Dumbo Rat,Rat,78%,images/squeaky.jpg
+Kiki,African Grey,Parrot,78%,images/kiki.jpg
+Luna,Ragdoll,Cat,78%,images/luna.jpg
+Bella,Beagle,Dog,78%,images/bella.jpg
+Tango,Parakeet,Parrot,77%,images/tango.jpg
+Tiny,Campbell's  Hamster,Hamster,77%,images/tiny.jpg
+Shadow,Sphynx,Cat,77%,images/shadow.jpg
+Charlie,Golden Retriever,Dog,76%,images/charlie.jpg
+Zoe,Syrian Hamster,Hamster,75%,images/zoe.jpg
+Peanut,Chinese Hamster,Hamster,75%,images/peanut.jpg
+Rocky,Roborovski Hamster,Hamster,75%,images/rocky.jpg
+Rock,Roborovski Hamster,Hamster,75%,images/rock.jpg
+Peaches,Silkie,Guinea Pig,75%,images/peaches.jpg
+Spiky,Doberman,Dog,75%,images/spiky.jpg
+Pumpkin,Winter White Hamster,Hamster,74%,images/pumpkin.jpg
+Milo,Siamese,Cat,72%,images/milo.jpg
+Cooper,Beagle,Dog,71%,images/cooper.jpg
+Ginger,Shiba Inu,Dog,70%,images/ginger.jpg
+Penny,Peruvian,Guinea Pig,69%,images/penny.jpg
+Giz,Peruvian,Guinea Pig,69%,images/giz.jpg
+Coop,Chihuahua,Dog,68%,images/coop.jpg
+Bubbles,Goldfish,Fish,68%,images/bubbles.jpg
+Blue,Guppy,Fish,68%,images/blue.jpg
+Benny,Basset Hound,Dog,67%,images/benny.jpg
+Buddy,Labrador,Dog,65%,images/buddy.jpg
+Sadie,Poodle,Dog,62%,images/sadie.jpg
