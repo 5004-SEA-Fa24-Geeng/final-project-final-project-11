@@ -1,5 +1,6 @@
 package Database;
 
+import model.Pet;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
