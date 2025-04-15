@@ -1,5 +1,4 @@
 package model;
-import Database.PetDatabase;
 
 public class Pet {
     private final String name;
