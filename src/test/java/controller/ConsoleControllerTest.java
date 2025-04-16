@@ -1,212 +1,227 @@
 package controller;
 
 import controller.ConsoleController;
-import model.*;
+import model.CompatibilityCalculator;
+import model.Pet;
+import model.PetWithScore;
+import model.User;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintStream;
+import java.io.*;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Unit tests for {@link ConsoleController}, verifying console output
+ * for various display methods and internal formatting utilities.
+ */
 @ExtendWith(MockitoExtension.class)
 public class ConsoleControllerTest {
 
-    private static final String TEST_DIR = "test_output";
+    private static final String TEST_DIR      = "test_output";
     private static final String TEST_CSV_PATH = TEST_DIR + "/pet_test.csv";
 
     private ConsoleController consoleController;
     private User testUser;
     private CompatibilityCalculator calculator;
 
+    // Captured output stream
     private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-    private final PrintStream originalOut = System.out;
+    private PrintStream originalOut;
 
     @BeforeEach
     public void setUp() throws IOException {
-        // Redirect System.out for testing console output
+        // Redirect System.out to capture console output
+        originalOut = System.out;
         System.setOut(new PrintStream(outContent));
 
-        // Create test directory if it doesn't exist
+        // Ensure test directory exists
         new File(TEST_DIR).mkdirs();
 
-        // Create test CSV
+        // Prepare a CSV with sample data
         createTestCsv();
 
-        // Setup test user and calculator
-        testUser = new User("Male", "Any", "ENFJ", 7, 500, 200, false, true, 4.0);
+        // Initialize user and compatibility calculator
+        testUser   = new User("Male", "Any", "ENFJ", 7, 500, 200, false, true, 4.0);
         calculator = new CompatibilityCalculator();
 
-        // Initialize ConsoleController
+        // Create the controller under test
         consoleController = new ConsoleController(testUser, calculator);
     }
 
     @AfterEach
     public void tearDown() {
-        // Reset System.out
+        // Restore original System.out
         System.setOut(originalOut);
 
-        // Delete test CSV and directory
+        // Clean up test files and directory
         new File(TEST_CSV_PATH).delete();
         new File(TEST_DIR).delete();
     }
 
+    /**
+     * Verifies that displayBestMatch shows a pet name and its compatibility score.
+     */
     @Test
     public void testDisplayBestMatch() {
-        // Act
         consoleController.displayBestMatch(TEST_CSV_PATH);
-
-        // Assert
         String output = outContent.toString();
-        // 使用更灵活的断言，检查是否包含关键信息而不是特定标题
-        assertTrue(output.contains("Bella"), "Output should contain pet name");
-        assertTrue(output.contains("95%"), "Output should contain compatibility score");
+
+        assertTrue(output.contains("Bella"),    "Output should include the pet's name");
+        assertTrue(output.contains("95%"),      "Output should include the compatibility score");
     }
 
+    /**
+     * When all scores are low, displayBestMatch should indicate no suitable pets.
+     */
     @Test
     public void testDisplayNoCompatiblePets() throws IOException {
-        // Create CSV with low scores
         createLowScoreCsv();
-
-        // Act
         consoleController.displayBestMatch(TEST_CSV_PATH);
-
-        // Assert
         String output = outContent.toString();
-        // 检查是否包含无兼容宠物或低兼容性的相关信息
-        assertTrue(output.contains("NO COMPATIBLE PETS FOUND") ||
-                        output.contains("LOW COMPATIBILITY") ||
-                        output.contains("might not be the best time"),
-                "Output should indicate low compatibility or no compatible pets");
+
+        assertTrue(
+                output.contains("NO COMPATIBLE PETS FOUND")
+                        || output.contains("LOW COMPATIBILITY")
+                        || output.contains("might not be the best time"),
+                "Output should indicate low or no compatibility"
+        );
     }
 
+    /**
+     * displayRecommendedPets should list high-scoring pets only.
+     */
     @Test
     public void testDisplayRecommendedPets() {
-        // Act
         consoleController.displayRecommendedPets(TEST_CSV_PATH);
-
-        // Assert
         String output = outContent.toString();
-        // 使用更灵活的断言，检查是否包含关键信息而不是特定标题
-        assertTrue(output.contains("Bella"), "Output should contain first pet");
-        assertTrue(output.contains("Charlie"), "Output should contain second pet");
-        assertFalse(output.contains("Luna"), "Output should not contain low-compatibility pet");
+
+        assertTrue(output.contains("Bella"),   "Should contain first recommended pet");
+        assertTrue(output.contains("Charlie"), "Should contain second recommended pet");
+        assertFalse(output.contains("Luna"),   "Should omit low-compatibility pet");
     }
 
+    /**
+     * displayAllPetsWithScores should list every pet and mention scores.
+     */
     @Test
     public void testDisplayAllPetsWithScores() {
-        // Act
         consoleController.displayAllPetsWithScores(TEST_CSV_PATH);
-
-        // Assert
         String output = outContent.toString();
-        // 检查是否包含所有宠物信息
-        assertTrue(output.contains("ALL PETS") || output.contains("COMPATIBILITY SCORES"),
-                "Output should mention all pets or compatibility scores");
-        assertTrue(output.contains("Bella"), "Output should contain first pet");
-        assertTrue(output.contains("Charlie"), "Output should contain second pet");
-        assertTrue(output.contains("Milo"), "Output should contain third pet");
+
+        assertTrue(
+                output.contains("ALL PETS")
+                        || output.contains("COMPATIBILITY SCORES"),
+                "Should include header indicating all pets or scores"
+        );
+        assertTrue(output.contains("Bella"),   "Should list first pet");
+        assertTrue(output.contains("Charlie"), "Should list second pet");
+        assertTrue(output.contains("Milo"),    "Should list third pet");
     }
 
+    /**
+     * displaySearchResult should show search header, pet names, and scores.
+     */
     @Test
     public void testDisplaySearchResult() {
-        // Create sample search results
-        List<PetWithScore> searchResults = new ArrayList<>();
+        List<PetWithScore> results = new ArrayList<>();
+        Pet pet1 = new Pet("Bella","Dog","Beagle","Female","ISFJ",
+                7,50.0,30.0,false,true,2.0,"images/bella.jpg");
+        Pet pet2 = new Pet("Charlie","Dog","Golden Retriever","Male","ENTJ",
+                9,75.0,50.0,false,true,2.5,"images/charlie.jpg");
 
-        Pet pet1 = new Pet("Bella", "Dog", "Beagle", "Female", "ISFJ",
-                7, 50.0, 30.0, false, true, 2.0, "images/bella.jpg");
-        Pet pet2 = new Pet("Charlie", "Dog", "Golden Retriever", "Male", "ENTJ",
-                9, 75.0, 50.0, false, true, 2.5, "images/charlie.jpg");
+        results.add(new PetWithScore(pet1, 0.95));
+        results.add(new PetWithScore(pet2, 0.85));
 
-        searchResults.add(new PetWithScore(pet1, 0.95));
-        searchResults.add(new PetWithScore(pet2, 0.85));
-
-        // Act
-        consoleController.displaySearchResult(searchResults);
-
-        // Assert
+        consoleController.displaySearchResult(results);
         String output = outContent.toString();
-        // 检查是否包含搜索结果信息
-        assertTrue(output.contains("SEARCH") || output.contains("RESULTS"),
-                "Output should indicate search results");
-        assertTrue(output.contains("Bella"), "Output should contain first pet");
-        assertTrue(output.contains("Charlie"), "Output should contain second pet");
-        assertTrue(output.contains("95%") && output.contains("85%"),
-                "Output should contain compatibility scores");
+
+        assertTrue(
+                output.contains("SEARCH")
+                        || output.contains("RESULTS"),
+                "Should include a search results header"
+        );
+        assertTrue(output.contains("Bella"),    "Should list first search result");
+        assertTrue(output.contains("Charlie"),  "Should list second search result");
+        assertTrue(output.contains("95%")
+                && output.contains("85%"),      "Should display compatibility percentages");
     }
 
+    /**
+     * displaySearchResult with empty list should indicate no results.
+     */
     @Test
     public void testDisplaySearchResultEmpty() {
-        // Act
         consoleController.displaySearchResult(new ArrayList<>());
-
-        // Assert
         String output = outContent.toString();
-        // 检查是否包含没有搜索结果的信息
-        assertTrue(output.contains("NO") && output.contains("RESULTS"),
-                "Output should indicate no search results");
+
+        assertTrue(
+                output.contains("NO")
+                        && output.contains("RESULTS"),
+                "Should indicate that there are no search results"
+        );
     }
 
+    /**
+     * Private method displayLowCompatibility should output low‐compatibility message.
+     */
     @Test
     public void testDisplayLowCompatibility() {
-        // Create a pet with low compatibility
-        Pet pet = new Pet("Milo", "Cat", "Siamese", "Male", "INFP",
-                5, 25.0, 20.0, false, false, 1.5, "images/milo.jpg");
-        PetWithScore petWithScore = new PetWithScore(pet, 0.75);
+        Pet pet = new Pet("Milo","Cat","Siamese","Male","INFP",
+                5,25.0,20.0,false,false,1.5,"images/milo.jpg");
+        PetWithScore pws = new PetWithScore(pet, 0.75);
 
-        // Act - using reflection to access private method
         try {
-            Method method = ConsoleController.class.getDeclaredMethod(
-                    "displayLowCompatibility", PetWithScore.class);
-            method.setAccessible(true);
-            method.invoke(consoleController, petWithScore);
+            Method lowCompat = ConsoleController.class
+                    .getDeclaredMethod("displayLowCompatibility", PetWithScore.class);
+            lowCompat.setAccessible(true);
+            lowCompat.invoke(consoleController, pws);
 
-            // Assert
             String output = outContent.toString();
-            // 检查是否包含低兼容性信息
-            assertTrue(output.contains("LOW") || output.contains("COMPATIBILITY"),
-                    "Output should indicate low compatibility");
-            assertTrue(output.contains("Milo"), "Output should contain pet name");
-            assertTrue(output.contains("75%"), "Output should contain compatibility score");
+            assertTrue(output.contains("LOW")
+                            || output.contains("COMPATIBILITY"),
+                    "Should indicate low compatibility");
+            assertTrue(output.contains("Milo"),   "Should mention the pet's name");
+            assertTrue(output.contains("75%"),    "Should display the compatibility percentage");
         } catch (Exception e) {
             fail("Failed to invoke displayLowCompatibility: " + e.getMessage());
         }
     }
 
+    /**
+     * Private method formatPercentage should correctly convert a double to "NN%".
+     */
     @Test
     public void testFormatPercentage() {
-        // Using reflection to access private method
         try {
-            Method method = ConsoleController.class.getDeclaredMethod(
-                    "formatPercentage", double.class);
-            method.setAccessible(true);
+            Method fmt = ConsoleController.class
+                    .getDeclaredMethod("formatPercentage", double.class);
+            fmt.setAccessible(true);
 
-            // Act
-            String result1 = (String) method.invoke(consoleController, 0.95);
-            String result2 = (String) method.invoke(consoleController, 0.7523);
-            String result3 = (String) method.invoke(consoleController, 0.0);
+            String p1 = (String) fmt.invoke(consoleController, 0.95);
+            String p2 = (String) fmt.invoke(consoleController, 0.7523);
+            String p3 = (String) fmt.invoke(consoleController, 0.0);
 
-            // Assert
-            assertEquals("95%", result1, "Should format 0.95 as 95%");
-            assertEquals("75%", result2, "Should format 0.7523 as 75%");
-            assertEquals("0%", result3, "Should format 0.0 as 0%");
+            assertEquals("95%", p1, "0.95 should format as 95%");
+            assertEquals("75%", p2, "0.7523 should format as 75%");
+            assertEquals("0%",  p3, "0.0 should format as 0%");
         } catch (Exception e) {
             fail("Failed to invoke formatPercentage: " + e.getMessage());
         }
     }
 
-    // Helper methods
+    // ---------------------- Helper Methods ----------------------
 
+    /**
+     * Creates a CSV with three pets: Bella (95%), Charlie (85%), Milo (70%).
+     */
     private void createTestCsv() throws IOException {
         try (FileWriter writer = new FileWriter(TEST_CSV_PATH)) {
             writer.write("Name,Breed,Type,Score,ImagePath\n");
@@ -216,6 +231,9 @@ public class ConsoleControllerTest {
         }
     }
 
+    /**
+     * Creates a CSV with all low scores: 75%, 65%, 55%.
+     */
     private void createLowScoreCsv() throws IOException {
         try (FileWriter writer = new FileWriter(TEST_CSV_PATH)) {
             writer.write("Name,Breed,Type,Score,ImagePath\n");

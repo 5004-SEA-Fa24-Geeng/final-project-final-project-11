@@ -1,6 +1,5 @@
 package model;
 
-import model.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,8 +12,13 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Unit tests for {@link PetFilter}, verifying that pets are correctly filtered
+ * based on their compatibility scores read from a CSV file.
+ */
 public class PetFilterTest {
 
+    // Directory and CSV file path used for all tests
     private static final String TEST_DIR = "test_output";
     private static final String TEST_CSV_PATH = TEST_DIR + "/pet_test.csv";
 
@@ -23,181 +27,194 @@ public class PetFilterTest {
 
     @BeforeEach
     public void setUp() throws IOException {
-        // Create test directory if it doesn't exist
+        // Ensure the test directory exists
         new File(TEST_DIR).mkdirs();
 
-        // Set up test data
+        // Prepare in-memory Pet objects for filtering
         setupTestData();
 
-        // Initialize PetFilter
+        // Initialize PetFilter pointing at our test CSV (which will be created per test)
         petFilter = new PetFilter(TEST_CSV_PATH);
     }
 
     @AfterEach
     public void tearDown() {
-        // Delete test CSV and directory
+        // Remove test CSV file and directory after each test
         new File(TEST_CSV_PATH).delete();
         new File(TEST_DIR).delete();
     }
 
+    /**
+     * Verifies that only pets with compatibility scores strictly above 80% are returned.
+     */
     @Test
     public void testFilterPetsAbove80Percent() throws IOException {
-        // Create CSV with mixed compatibility scores
+        // Prepare CSV with mixed scores
         createTestCsv(new int[]{95, 85, 75, 65, 50});
 
-        // Act
+        // Execute filter
         List<Pet> filteredPets = petFilter.filterPetsByCompatibility(testPets);
 
-        // Assert
-        assertNotNull(filteredPets, "Filtered pets should not be null");
-        assertEquals(2, filteredPets.size(), "Should have 2 pets with scores above 80%");
-        assertEquals("Bella", filteredPets.get(0).getName());
-        assertEquals("Max", filteredPets.get(1).getName());
+        // Validate results: only "Bella" (95) and "Max" (85) should be included
+        assertNotNull(filteredPets, "Filtered list should not be null");
+        assertEquals(2, filteredPets.size(), "Expect exactly 2 pets above 80%");
+        assertEquals("Bella", filteredPets.get(0).getName(), "First pet should be Bella");
+        assertEquals("Max", filteredPets.get(1).getName(), "Second pet should be Max");
     }
 
+    /**
+     * Verifies that an empty result is returned when no scores exceed 80%.
+     */
     @Test
     public void testFilterNoCompatiblePets() throws IOException {
-        // Create CSV with all scores below 80%
+        // All scores below or equal to 80%
         createTestCsv(new int[]{79, 75, 70, 65, 50});
 
-        // Act
         List<Pet> filteredPets = petFilter.filterPetsByCompatibility(testPets);
 
-        // Assert
-        assertNotNull(filteredPets, "Filtered pets should not be null");
-        assertTrue(filteredPets.isEmpty(), "Should have no pets when all scores are below 80%");
+        assertNotNull(filteredPets, "Filtered list should not be null");
+        assertTrue(filteredPets.isEmpty(), "Expect no pets when all scores < 80%");
     }
 
+    /**
+     * Verifies that all pets are returned when all scores are above 80%.
+     */
     @Test
     public void testFilterAllCompatiblePets() throws IOException {
-        // Create CSV with all scores above 80%
+        // All scores well above 80%
         createTestCsv(new int[]{95, 90, 85, 82, 81});
 
-        // Act
         List<Pet> filteredPets = petFilter.filterPetsByCompatibility(testPets);
 
-        // Assert
-        assertNotNull(filteredPets, "Filtered pets should not be null");
-        assertEquals(5, filteredPets.size(), "Should have all pets when all scores are above 80%");
+        assertNotNull(filteredPets, "Filtered list should not be null");
+        assertEquals(5, filteredPets.size(), "Expect all 5 pets when all scores > 80%");
     }
 
+    /**
+     * Verifies that a score exactly at 80% is not included (boundary condition).
+     */
     @Test
     public void testFilterWithEdgeCase80Percent() throws IOException {
-        // Create CSV with a score exactly at 80%
+        // One pet exactly at 80% and one above
         createTestCsv(new int[]{95, 80, 70});
 
-        // Act
         List<Pet> filteredPets = petFilter.filterPetsByCompatibility(testPets);
 
-        // Assert
-        assertNotNull(filteredPets, "Filtered pets should not be null");
-        assertEquals(1, filteredPets.size(), "Should have 1 pet when one score is above 80%");
-        assertEquals("Bella", filteredPets.get(0).getName());
+        assertNotNull(filteredPets, "Filtered list should not be null");
+        assertEquals(1, filteredPets.size(), "Expect only pets > 80%");
+        assertEquals("Bella", filteredPets.get(0).getName(), "Only Bella (95%) should match");
     }
 
+    /**
+     * Verifies behavior when the CSV exists but contains only the header (no data rows).
+     */
     @Test
     public void testFilterEmptyCsv() throws IOException {
-        // Create empty CSV (just header)
+        // Create a CSV with only header row
         try (FileWriter writer = new FileWriter(TEST_CSV_PATH)) {
             writer.write("Name,Breed,Type,Score,ImagePath\n");
         }
 
-        // Act
         List<Pet> filteredPets = petFilter.filterPetsByCompatibility(testPets);
 
-        // Assert
-        assertNotNull(filteredPets, "Filtered pets should not be null");
-        assertTrue(filteredPets.isEmpty(), "Should have no pets for empty CSV");
+        assertNotNull(filteredPets, "Filtered list should not be null");
+        assertTrue(filteredPets.isEmpty(), "Expect empty result for header-only CSV");
     }
 
+    /**
+     * Verifies behavior when the CSV file does not exist at all.
+     */
     @Test
     public void testFilterNonExistentCsv() {
-        // Create filter with non-existent CSV
+        // Point filter at a non-existent file
         PetFilter badFilter = new PetFilter("non_existent_file.csv");
-
-        // Act
         List<Pet> filteredPets = badFilter.filterPetsByCompatibility(testPets);
 
-        // Assert
-        assertNotNull(filteredPets, "Filtered pets should not be null");
-        assertTrue(filteredPets.isEmpty(), "Should have no pets for non-existent CSV");
+        assertNotNull(filteredPets, "Filtered list should not be null");
+        assertTrue(filteredPets.isEmpty(), "Expect empty result for missing CSV");
     }
 
+    /**
+     * Verifies behavior when the CSV has an invalid structure or headers.
+     */
     @Test
     public void testFilterInvalidCsvFormat() throws IOException {
-        // Create CSV with invalid format
+        // Write malformed CSV content
         try (FileWriter writer = new FileWriter(TEST_CSV_PATH)) {
             writer.write("InvalidHeader\n");
-            writer.write("InvalidData\n");
+            writer.write("BadData\n");
         }
 
-        // Act
         List<Pet> filteredPets = petFilter.filterPetsByCompatibility(testPets);
 
-        // Assert
-        assertNotNull(filteredPets, "Filtered pets should not be null");
-        assertTrue(filteredPets.isEmpty(), "Should have no pets for invalid CSV format");
+        assertNotNull(filteredPets, "Filtered list should not be null");
+        assertTrue(filteredPets.isEmpty(), "Expect empty result for invalid CSV format");
     }
 
+    /**
+     * Verifies behavior when passing in an empty pet list.
+     */
     @Test
     public void testFilterWithEmptyPetList() throws IOException {
-        // Create valid CSV
         createTestCsv(new int[]{95, 85, 75});
-
-        // Act with empty pet list
         List<Pet> filteredPets = petFilter.filterPetsByCompatibility(new ArrayList<>());
 
-        // Assert
-        assertNotNull(filteredPets, "Filtered pets should not be null");
-        assertTrue(filteredPets.isEmpty(), "Should have no pets when input list is empty");
+        assertNotNull(filteredPets, "Filtered list should not be null");
+        assertTrue(filteredPets.isEmpty(), "Expect empty result for empty input list");
     }
 
+    /**
+     * Verifies behavior when passing in a null pet list.
+     */
     @Test
     public void testFilterWithNullPetList() throws IOException {
-        // Create valid CSV
         createTestCsv(new int[]{95, 85, 75});
-
-        // Act with null pet list
         List<Pet> filteredPets = petFilter.filterPetsByCompatibility(null);
 
-        // Assert
-        assertNotNull(filteredPets, "Filtered pets should not be null");
-        assertTrue(filteredPets.isEmpty(), "Should have no pets when input list is null");
+        assertNotNull(filteredPets, "Filtered list should not be null");
+        assertTrue(filteredPets.isEmpty(), "Expect empty result for null input list");
     }
 
-    // Helper methods
+    // ---------------- Helper methods for test data preparation ----------------
 
+    /**
+     * Constructs a list of five Pet objects with known names and properties.
+     */
     private void setupTestData() {
         testPets = new ArrayList<>();
-
-        // Add test pets
         testPets.add(new Pet("Bella", "Dog", "Golden Retriever", "Female", "ENFP",
                 7, 500, 120, false, true, 3.5, "images/bella.jpg"));
-
         testPets.add(new Pet("Max", "Dog", "German Shepherd", "Male", "ISTJ",
                 9, 700, 150, false, true, 4.0, "images/max.jpg"));
-
         testPets.add(new Pet("Luna", "Cat", "Siamese", "Female", "INTJ",
                 5, 200, 80, true, false, 1.5, "images/luna.jpg"));
-
         testPets.add(new Pet("Rocky", "Hamster", "Dwarf", "Male", "ESFP",
                 3, 50, 30, true, false, 1.0, "images/rocky.jpg"));
-
         testPets.add(new Pet("Daisy", "Dog", "Bulldog", "Female", "ESTP",
                 6, 400, 100, false, true, 2.5, "images/daisy.jpg"));
     }
 
+    /**
+     * Writes a CSV file with given compatibility scores (as percentages) for the first N pets.
+     *
+     * @param scores array of integer percentages to write (e.g., 85 means "85%")
+     * @throws IOException if writing fails
+     */
     private void createTestCsv(int[] scores) throws IOException {
         try (FileWriter writer = new FileWriter(TEST_CSV_PATH)) {
+            // Header
             writer.write("Name,Breed,Type,Score,ImagePath\n");
 
             String[] names = {"Bella", "Max", "Luna", "Rocky", "Daisy"};
             String[] breeds = {"Golden Retriever", "German Shepherd", "Siamese", "Dwarf", "Bulldog"};
             String[] types = {"Dog", "Dog", "Cat", "Hamster", "Dog"};
 
+            // Write rows for each score up to the number of names
             for (int i = 0; i < Math.min(scores.length, names.length); i++) {
-                writer.write(String.format("%s,%s,%s,%d%%,images/%s.jpg\n",
-                        names[i], breeds[i], types[i], scores[i], names[i].toLowerCase()));
+                writer.write(String.format(
+                        "%s,%s,%s,%d%%,images/%s.jpg\n",
+                        names[i], breeds[i], types[i], scores[i], names[i].toLowerCase()
+                ));
             }
         }
     }

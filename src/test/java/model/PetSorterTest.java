@@ -1,22 +1,23 @@
 package model;
 
-import model.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Unit tests for {@link PetSorter}, ensuring that pets are correctly
+ * sorted according to compatibility and exported to CSV, including
+ * tie-breaking and allergen handling.
+ */
 public class PetSorterTest {
 
-    private static final String TEST_DIR = "test_output";
+    private static final String TEST_DIR      = "test_output";
     private static final String TEST_CSV_PATH = TEST_DIR + "/pet_test.csv";
 
     private List<Pet> testPets;
@@ -26,162 +27,191 @@ public class PetSorterTest {
 
     @BeforeEach
     public void setUp() {
-        // Create test directory if it doesn't exist
+        // Ensure test directory exists
         new File(TEST_DIR).mkdirs();
 
-        // Setup test data
+        // Prepare test data
         setupTestData();
 
-        // Initialize PetSorter
+        // Use a real compatibility calculator
         calculator = new CompatibilityCalculator();
-        petSorter = new PetSorter(testUser, calculator);
+        petSorter  = new PetSorter(testUser, calculator);
     }
 
     @AfterEach
     public void tearDown() {
-        // Delete test CSV and directory
+        // Remove test CSV and directory
         new File(TEST_CSV_PATH).delete();
         new File(TEST_DIR).delete();
     }
 
+    /**
+     * Verifies that sorting and exporting writes a CSV with:
+     * - A header row
+     * - One row per pet
+     * - Pets ordered by descending compatibility score
+     */
     @Test
     public void testSortAndExportToCSV() throws IOException {
-        // Act - sort pets and export to CSV
+        // Act: sort and write CSV
         petSorter.sortAndExportToCSV(testPets, TEST_CSV_PATH);
 
-        // Assert - check if CSV was created
+        // Assert: file exists
         File csvFile = new File(TEST_CSV_PATH);
         assertTrue(csvFile.exists(), "CSV file should be created");
 
-        // Read the CSV and check its content
+        // Read and inspect CSV contents
         List<String[]> csvLines = readCSV(TEST_CSV_PATH);
-
-        // Check header
         assertNotNull(csvLines, "CSV data should not be null");
-        assertTrue(csvLines.size() > 0, "CSV should have at least a header row");
-        assertEquals(5, csvLines.get(0).length, "CSV header should have 5 columns");
-        assertEquals("Name", csvLines.get(0)[0], "First header should be Name");
-        assertEquals("Breed", csvLines.get(0)[1], "Second header should be Breed");
+        assertTrue(csvLines.size() > 1, "CSV should contain header and pet rows");
 
-        // Check content - should have all test pets
-        assertEquals(testPets.size() + 1, csvLines.size(), "CSV should contain all test pets plus header");
+        // Header checks
+        String[] header = csvLines.get(0);
+        assertEquals(5, header.length, "Header should have 5 columns");
+        assertArrayEquals(new String[]{"Name","Breed","Type","Score","ImagePath"}, header, "Header columns should match");
 
-        // Check sorting - pets should be sorted by score (first pet has highest score)
-        // This assumes pet names are unique in the test data
-        String highestScoringPetName = findPetWithHighestScore();
-        assertEquals(highestScoringPetName, csvLines.get(1)[0],
-                "First pet in CSV should be the one with highest score");
+        // Row count = pets + header
+        assertEquals(testPets.size() + 1, csvLines.size(), "CSV should contain one row per pet plus header");
+
+        // The first data row should be the pet with highest calculated score
+        String expectedTopName = findPetWithHighestScore();
+        assertEquals(expectedTopName, csvLines.get(1)[0],
+                "Top row should be pet with highest compatibility");
     }
 
+    /**
+     * When two pets share the same compatibility score, the one matching
+     * the user's preferred gender should come first.
+     */
     @Test
     public void testTieBreakingLogic() throws IOException {
-        // Create pets with same compatibility score but different attributes
-        Pet pet1 = new Pet("Pet1", "Dog", "Breed1", testUser.getPreferredPetGender(), testUser.getMbti(),
-                testUser.getEnergyLevel(), testUser.getSpace() * 0.5, testUser.getBudget() * 0.5,
-                false, testUser.hasYard(), testUser.getTimePerDay() * 0.5, "images/pet1.jpg");
+        // Both pets will calculate to the same score
+        Pet pet1 = new Pet("Pet1","Dog","Breed1",
+                testUser.getPreferredPetGender(), testUser.getMbti(),
+                testUser.getEnergyLevel(), testUser.getSpace()*0.5,
+                testUser.getBudget()*0.5,false, testUser.hasYard(),
+                testUser.getTimePerDay()*0.5,"images/pet1.jpg");
+        Pet pet2 = new Pet("Pet2","Dog","Breed2",
+                /* opposite gender */ testUser.getPreferredPetGender().equals("Male") ? "Female" : "Male",
+                testUser.getMbti(), testUser.getEnergyLevel(),
+                testUser.getSpace()*0.5, testUser.getBudget()*0.5,
+                false, testUser.hasYard(),
+                testUser.getTimePerDay()*0.5,"images/pet2.jpg");
 
-        Pet pet2 = new Pet("Pet2", "Dog", "Breed2", "Opposite Gender", testUser.getMbti(),
-                testUser.getEnergyLevel(), testUser.getSpace() * 0.5, testUser.getBudget() * 0.5,
-                false, testUser.hasYard(), testUser.getTimePerDay() * 0.5, "images/pet2.jpg");
+        List<Pet> tiePets = new ArrayList<>();
+        tiePets.add(pet2);
+        tiePets.add(pet1);
 
-        List<Pet> tieBreakPets = new ArrayList<>();
-        tieBreakPets.add(pet2); // Add opposite gender pet first
-        tieBreakPets.add(pet1); // Add preferred gender pet second
-
-        // Act - sort pets and export to CSV
-        petSorter.sortAndExportToCSV(tieBreakPets, TEST_CSV_PATH);
-
-        // Assert - check that preferred gender pet comes first
+        petSorter.sortAndExportToCSV(tiePets, TEST_CSV_PATH);
         List<String[]> csvLines = readCSV(TEST_CSV_PATH);
-        assertEquals("Pet1", csvLines.get(1)[0], "Pet with preferred gender should be first");
+
+        assertEquals("Pet1", csvLines.get(1)[0], "Preferred-gender pet should appear first");
     }
 
+    /**
+     * Exporting an empty pet list should still produce a CSV
+     * with only the header row and no exception.
+     */
     @Test
     public void testEmptyPetList() {
-        // Act & Assert - should not throw exception with empty list
-        assertDoesNotThrow(() -> petSorter.sortAndExportToCSV(new ArrayList<>(), TEST_CSV_PATH));
+        assertDoesNotThrow(() ->
+                        petSorter.sortAndExportToCSV(new ArrayList<>(), TEST_CSV_PATH),
+                "Should not throw on empty list"
+        );
 
-        // Check that CSV was created but only has header
         try {
             List<String[]> csvLines = readCSV(TEST_CSV_PATH);
-            assertEquals(1, csvLines.size(), "CSV should only have header row");
+            assertEquals(1, csvLines.size(), "Only header row should be present");
         } catch (IOException e) {
-            fail("Failed to read CSV: " + e.getMessage());
+            fail("Reading CSV failed: " + e.getMessage());
         }
     }
 
+    /**
+     * If the user is allergic, any pet marked allergenic must receive
+     * a 0% score and be placed after non-allergenic pets.
+     */
     @Test
     public void testAllergicUserWithAllergenicPet() throws IOException {
-        // Create allergic user
-        User allergicUser = new User("Male", "Any", "ENFJ", 7, 500, 200, true, true, 4.0);
+        // Create an allergic user
+        User allergicUser = new User(
+                testUser.getGender(), testUser.getPreferredPetGender(),
+                testUser.getMbti(), testUser.getEnergyLevel(),
+                testUser.getSpace(), testUser.getBudget(),
+                /* allergic */ true, testUser.hasYard(), testUser.getTimePerDay()
+        );
         PetSorter allergySorter = new PetSorter(allergicUser, calculator);
 
-        // Add allergenic and non-allergenic pets
-        Pet allergenicPet = new Pet("Sneeze", "Cat", "Allergenic", "Male", "ENFJ",
-                7, 400, 150, true, false, 2.0, "images/sneeze.jpg");
-        Pet nonAllergenicPet = new Pet("Safe", "Dog", "Hypoallergenic", "Male", "ENFJ",
-                7, 400, 150, false, false, 2.0, "images/safe.jpg");
+        Pet allergenicPet = new Pet("Sneeze","Cat","Allergenic","Male",
+                testUser.getMbti(), testUser.getEnergyLevel(),
+                testUser.getSpace(), testUser.getBudget(),
+                true, /* no yard */ false, testUser.getTimePerDay(),
+                "images/sneeze.jpg");
+        Pet hypoPet = new Pet("Safe","Dog","Hypoallergenic","Male",
+                testUser.getMbti(), testUser.getEnergyLevel(),
+                testUser.getSpace(), testUser.getBudget(),
+                false, false, testUser.getTimePerDay(),
+                "images/safe.jpg");
 
-        List<Pet> allergyTestPets = new ArrayList<>();
-        allergyTestPets.add(allergenicPet);
-        allergyTestPets.add(nonAllergenicPet);
+        List<Pet> allergyPets = List.of(allergenicPet, hypoPet);
+        allergySorter.sortAndExportToCSV(allergyPets, TEST_CSV_PATH);
 
-        // Act
-        allergySorter.sortAndExportToCSV(allergyTestPets, TEST_CSV_PATH);
-
-        // Assert - allergenic pet should have score 0 and be after non-allergenic
         List<String[]> csvLines = readCSV(TEST_CSV_PATH);
-        assertEquals("Safe", csvLines.get(1)[0], "Non-allergenic pet should be first");
+        // Header + 2 pets = 3 rows
+        assertEquals("Safe", csvLines.get(1)[0],  "Non-allergenic pet should be listed first");
         assertEquals("Sneeze", csvLines.get(2)[0], "Allergenic pet should be last");
-
-        // Check score - should be 0%
-        assertTrue(csvLines.get(2)[3].contains("0%"), "Allergenic pet should have 0% score");
+        assertTrue(csvLines.get(2)[3].endsWith("0%"), "Allergenic pet must have 0% score");
     }
 
-    // Helper methods
+    // ---------------------- Helper Methods ----------------------
 
+    /**
+     * Initializes testPets and testUser:
+     * - Three sample pets with varied attributes
+     * - A user whose preferences align best with the first pet
+     */
     private void setupTestData() {
         testPets = new ArrayList<>();
-
-        // Add test pets
-        testPets.add(new Pet("Bella", "Dog", "Beagle", "Female", "ISFJ",
+        testPets.add(new Pet("Bella","Dog","Beagle","Female","ISFJ",
                 7, 50.0, 30.0, false, true, 2.0, "images/bella.jpg"));
-
-        testPets.add(new Pet("Charlie", "Dog", "Golden Retriever", "Male", "ENTJ",
+        testPets.add(new Pet("Charlie","Dog","Golden Retriever","Male","ENTJ",
                 9, 75.0, 50.0, false, true, 2.5, "images/charlie.jpg"));
+        testPets.add(new Pet("Milo","Cat","Siamese","Male","INFP",
+                5, 25.0, 20.0, false, false,1.5, "images/milo.jpg"));
 
-        testPets.add(new Pet("Milo", "Cat", "Siamese", "Male", "INFP",
-                5, 25.0, 20.0, false, false, 1.5, "images/milo.jpg"));
-
-        // Create test user - good match for Bella
-        testUser = new User("Male", "Female", "ISFJ", 7, 500, 200, false, true, 4.0);
+        // User preferences match Bella best
+        testUser = new User("Male", "Female", "ISFJ",
+                7, 500, 200, false, true, 4.0);
     }
 
-    private List<String[]> readCSV(String filePath) throws IOException {
+    /**
+     * Reads a CSV file into a list of String arrays (one per line, split on commas).
+     */
+    private List<String[]> readCSV(String path) throws IOException {
         List<String[]> lines = new ArrayList<>();
-
-        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                lines.add(line.split(","));
+        try (BufferedReader reader = new BufferedReader(new FileReader(path))) {
+            String row;
+            while ((row = reader.readLine()) != null) {
+                lines.add(row.split(","));
             }
         }
-
         return lines;
     }
 
+    /**
+     * Determines which pet has the highest compatibility score
+     * according to the calculator and testUser.
+     */
     private String findPetWithHighestScore() {
-        double highestScore = -1;
-        String highestScoringPetName = null;
-
+        double maxScore = Double.NEGATIVE_INFINITY;
+        String bestName = null;
         for (Pet pet : testPets) {
             double score = calculator.calculate(testUser, pet);
-            if (score > highestScore) {
-                highestScore = score;
-                highestScoringPetName = pet.getName();
+            if (score > maxScore) {
+                maxScore = score;
+                bestName = pet.getName();
             }
         }
-
-        return highestScoringPetName;
+        return bestName;
     }
 }
