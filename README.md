@@ -87,3 +87,14 @@ git clone https://github.com/5004-SEA-Fa24-Geeng/final-project-final-project-11.
 java -cp out PetForUApp
 ```
 For details, please check the `manual` folder.
+
+## Resources and References
+
+### Data Sources
+- Pet data used in this application was generated with assistance from ChatGPT, including pet names, breeds, personality traits, and compatibility factors.
+- MBTI personality type descriptions and compatibility insights were adapted from general psychology resources with assistance from ChatGPT.
+
+### Technical References
+- Oracle Java Documentation: [Java SE Documentation](https://docs.oracle.com/en/java/javase/17/)
+- Java CSV handling approach adapted from: [Baeldung CSV Processing in Java](https://www.baeldung.com/java-csv)
+- UML Diagrams created using Mermaid syntax: [Mermaid Documentation](https://mermaid-js.github.io/mermaid/#/)
