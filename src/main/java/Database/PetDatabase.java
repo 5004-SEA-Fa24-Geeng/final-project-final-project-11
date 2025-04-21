@@ -5,14 +5,28 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * The {@code PetDatabase} class simulates a pet database by storing and returning
+ * a predefined list of {@link Pet} objects. This static class is responsible for
+ * loading all pet records used throughout the application.
+ * <p>
+ * The pet list is populated during class loading through a static initializer block.
+ * A call to {@code getAllPets()} returns the full list of pets in randomized order.
+ */
 public class PetDatabase {
 
+    /** Internal list holding all pet entries. */
     private static List<Pet> petList = new ArrayList<>();
 
+    // Static block to populate the database at class load time
     static {
         populateDatabase();
     }
 
+    /**
+     * Initializes the static pet list with hardcoded {@link Pet} entries,
+     * representing different species, breeds, and MBTI compatibility profiles.
+     */
     private static void populateDatabase() {
         // Populate pets with mixed types and breeds
 
@@ -72,6 +86,13 @@ public class PetDatabase {
      * Fetches the list of all pets from the "database".
      *
      * @return List of all pets stored in the database.
+     */
+
+    /**
+     * Returns a shuffled list of all available pets in the database.
+     * This method simulates randomized display order for user recommendation.
+     *
+     * @return a {@code List<Pet>} containing all pets
      */
     public static List<Pet> getAllPets() {
         // Shuffle the list to randomize the order

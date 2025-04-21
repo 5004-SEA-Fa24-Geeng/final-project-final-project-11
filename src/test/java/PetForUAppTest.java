@@ -18,6 +18,12 @@ import java.util.Scanner;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Unit tests for the {@code PetForUApp} application.
+ * <p>
+ * This test class verifies both the logic and user interaction flow of the main application.
+ * It includes tests for command-line arguments, CSV generation, menu choices, and invalid input handling.
+ */
 @ExtendWith(MockitoExtension.class)
 public class PetForUAppTest {
 
@@ -25,11 +31,18 @@ public class PetForUAppTest {
     private final PrintStream originalOut = System.out;
     private final InputStream originalIn = System.in;
 
+    /**
+     * Redirects System.out before each test to capture console output.
+     */
     @BeforeEach
     public void setUpStreams() {
         System.setOut(new PrintStream(outContent));
     }
 
+    /**
+     * Restores original System.in and System.out after each test.
+     * Also deletes the output CSV file if generated.
+     */
     @AfterEach
     public void restoreStreams() {
         System.setOut(originalOut);
@@ -45,6 +58,9 @@ public class PetForUAppTest {
         }
     }
 
+    /**
+     * Tests that ArgsController correctly detects the '--help' flag.
+     */
     @Test
     public void testArgsControllerHelp() {
         String[] args = {"--help"};
@@ -54,6 +70,9 @@ public class PetForUAppTest {
         assertTrue(controller.getHelp().contains("Usage") && controller.getHelp().contains("Options"));
     }
 
+    /**
+     * Tests that ArgsController correctly identifies when help is not requested.
+     */
     @Test
     public void testArgsControllerNoHelp() {
         String[] args = {};
@@ -61,6 +80,9 @@ public class PetForUAppTest {
         assertFalse(controller.isHelp());
     }
 
+    /**
+     * Verifies that the pet database is populated successfully.
+     */
     @Test
     public void testPetDatabaseGetAllPets() {
         var pets = PetDatabase.getAllPets();
@@ -68,6 +90,9 @@ public class PetForUAppTest {
         assertFalse(pets.isEmpty());
     }
 
+    /**
+     * Runs the app with '--help' argument and checks if the usage message is printed.
+     */
     @Test
     public void testMainMethodWithHelpArgs() {
         String[] args = {"--help"};
@@ -76,6 +101,9 @@ public class PetForUAppTest {
         assertTrue(output.contains("Usage") && output.contains("Options"));
     }
 
+    /**
+     * Simulates full user input interaction and checks if prompts and menu appear correctly.
+     */
     @Test
     public void testMainMethodInteractiveMode() {
         String input = String.join(System.lineSeparator(),
@@ -95,6 +123,9 @@ public class PetForUAppTest {
         }
     }
 
+    /**
+     * Ensures the output directory and compatibility CSV are created after program execution.
+     */
     @Test
     public void testOutputDirectoryCreation() {
         File outputDir = new File("output");
@@ -116,6 +147,9 @@ public class PetForUAppTest {
         assertTrue(new File("output/pet_compatibility.csv").exists());
     }
 
+    /**
+     * Tests switch-case paths 1–4 in the menu, including search interaction.
+     */
     @Test
     public void testSwitchCase1234Paths() {
         // Simulate user selecting 1, 2, 3, then 4 with type and breed, and finally Q to quit
@@ -190,6 +224,9 @@ public class PetForUAppTest {
                 || output.contains("NO SEARCH RESULTS"));
     }
 
+    /**
+     * Validates that an invalid menu input triggers an error message.
+     */
     @Test
     public void testInvalidSwitchCase() {
         String input = String.join(System.lineSeparator(),
@@ -205,6 +242,9 @@ public class PetForUAppTest {
         assertTrue(output.contains("Invalid option"));
     }
 
+    /**
+     * Tests handling of invalid input in askYesNo method.
+     */
     @Test
     public void testAskYesNoInvalidEntry() {
         String input = String.join(System.lineSeparator(),
@@ -221,6 +261,9 @@ public class PetForUAppTest {
         assertTrue(output.contains("Please enter 'Y' or 'N'."));
     }
 
+    /**
+     * Tests handling of invalid and negative input in askPositiveInt and askPositiveDouble.
+     */
     @Test
     public void testAskPositiveIntInvalidEntry() {
         String input = String.join(System.lineSeparator(),

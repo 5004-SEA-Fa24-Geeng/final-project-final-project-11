@@ -4,10 +4,25 @@ import controller.PetManager;
 import java.io.File;
 import java.util.Scanner;
 
+/**
+ * Entry point for the PetForU application.
+ * <p>
+ * This class prompts the user for personal and environmental preferences,
+ * constructs a user profile, computes compatibility scores for all pets,
+ * and then presents a menu for the user to explore matched pet options.
+ */
 public final class PetForUApp {
 
+    /**
+     * Private constructor to prevent instantiation of this utility class.
+     */
     private PetForUApp() {}
 
+    /**
+     * Launches the PetForU application from the command line.
+     *
+     * @param args command-line arguments, optionally including '--help' or '-h'
+     */
     public static void main(String[] args) {
         try {
             ArgsController controller = new ArgsController(args);
@@ -90,6 +105,13 @@ public final class PetForUApp {
         }
     }
 
+    /**
+     * Prompts the user to answer a Yes/No question.
+     *
+     * @param scanner  the Scanner instance for user input
+     * @param question the question to display
+     * @return 1 for 'Y', 0 for 'N'
+     */
     private static int askYesNo(Scanner scanner, String question) {
         while (true) {
             System.out.print(question + " (Y/N): ");
@@ -100,6 +122,13 @@ public final class PetForUApp {
         }
     }
 
+    /**
+     * Prompts the user to input a positive integer.
+     *
+     * @param scanner  the Scanner instance for user input
+     * @param question the prompt to display
+     * @return a positive integer entered by the user
+     */
     private static int askPositiveInt(Scanner scanner, String question) {
         while (true) {
             try {
@@ -112,7 +141,14 @@ public final class PetForUApp {
             }
         }
     }
-
+    
+    /**
+     * Prompts the user to input a positive decimal number.
+     *
+     * @param scanner  the Scanner instance for user input
+     * @param question the prompt to display
+     * @return a positive double entered by the user
+     */
     private static double askPositiveDouble(Scanner scanner, String question) {
         while (true) {
             try {
