@@ -1,51 +1,51 @@
 Name,Breed,Type,Score,ImagePath
-Coco,Conure,Parrot,92%,images/coco.jpg
-Maggie,Cockatoo,Parrot,88%,images/maggie.jpg
-Sunny,Macaw,Parrot,88%,images/sunny.jpg
-Windy,Macaw,Parrot,88%,images/windy.jpg
-Nemo,Betta,Fish,86%,images/nemo.jpg
-Spike,Bearded Dragon,Lizard,86%,images/spike.jpg
-Tiger,British Shorthair,Cat,86%,images/tiger.jpg
-Slit,Ball Python,Snake,86%,images/slit.jpg
-Slither,Ball Python,Snake,86%,images/slither.jpg
-Loki,Oriental Shorthair,Cat,86%,images/loki.jpg
-Gizmo,Abyssinian,Guinea Pig,85%,images/gizmo.jpg
-Basil,Corn Snake,Snake,85%,images/basil.jpg
-Ruby,Lovebird,Parrot,85%,images/ruby.jpg
-Dusty,Lop,Rabbit,83%,images/dusty.jpg
-Shelly,American,Guinea Pig,83%,images/shelly.jpg
-Snowy,Netherland Dwarf,Rabbit,83%,images/snowy.jpg
-Flame,Leopard Gecko,Lizard,83%,images/flame.jpg
-Max,Rottweiler,Dog,83%,images/max.jpg
-Daisy,Bulldog,Dog,82%,images/daisy.jpg
-Tommy,Box Turtle,Turtle,82%,images/tommy.jpg
-Ziw,Maine Coon,Cat,81%,images/ziw.jpg
-Shelly,Red-eared Slider,Turtle,80%,images/shelly.jpg
-Whiskers,Fancy Rat,Rat,80%,images/whiskers.jpg
-Misty,Bengal,Cat,80%,images/misty.jpg
-Squeaky,Dumbo Rat,Rat,78%,images/squeaky.jpg
-Kiki,African Grey,Parrot,78%,images/kiki.jpg
-Luna,Ragdoll,Cat,78%,images/luna.jpg
-Bella,Beagle,Dog,78%,images/bella.jpg
-Tango,Parakeet,Parrot,77%,images/tango.jpg
-Tiny,Campbell's  Hamster,Hamster,77%,images/tiny.jpg
-Shadow,Sphynx,Cat,77%,images/shadow.jpg
-Charlie,Golden Retriever,Dog,76%,images/charlie.jpg
-Zoe,Syrian Hamster,Hamster,75%,images/zoe.jpg
-Peanut,Chinese Hamster,Hamster,75%,images/peanut.jpg
-Rocky,Roborovski Hamster,Hamster,75%,images/rocky.jpg
-Rock,Roborovski Hamster,Hamster,75%,images/rock.jpg
-Peaches,Silkie,Guinea Pig,75%,images/peaches.jpg
-Spiky,Doberman,Dog,75%,images/spiky.jpg
-Pumpkin,Winter White Hamster,Hamster,74%,images/pumpkin.jpg
-Milo,Siamese,Cat,72%,images/milo.jpg
-Cooper,Beagle,Dog,71%,images/cooper.jpg
-Ginger,Shiba Inu,Dog,70%,images/ginger.jpg
-Penny,Peruvian,Guinea Pig,69%,images/penny.jpg
-Giz,Peruvian,Guinea Pig,69%,images/giz.jpg
-Coop,Chihuahua,Dog,68%,images/coop.jpg
-Bubbles,Goldfish,Fish,68%,images/bubbles.jpg
-Blue,Guppy,Fish,68%,images/blue.jpg
+Spike,Bearded Dragon,Lizard,92%,images/spike.jpg
+Flame,Leopard Gecko,Lizard,89%,images/flame.jpg
+Snowy,Netherland Dwarf,Rabbit,89%,images/snowy.jpg
+Nemo,Betta,Fish,87%,images/nemo.jpg
+Slither,Ball Python,Snake,87%,images/slither.jpg
+Slit,Ball Python,Snake,87%,images/slit.jpg
+Shelly,Red-eared Slider,Turtle,86%,images/shelly.jpg
+Coco,Conure,Parrot,86%,images/coco.jpg
+Basil,Corn Snake,Snake,86%,images/basil.jpg
+Tommy,Box Turtle,Turtle,83%,images/tommy.jpg
+Bella,Beagle,Dog,82%,images/bella.jpg
+Tiger,British Shorthair,Cat,81%,images/tiger.jpg
+Maggie,Cockatoo,Parrot,79%,images/maggie.jpg
+Ruby,Lovebird,Parrot,78%,images/ruby.jpg
+Tiny,Campbell's  Hamster,Hamster,78%,images/tiny.jpg
+Windy,Macaw,Parrot,76%,images/windy.jpg
+Sunny,Macaw,Parrot,76%,images/sunny.jpg
+Ziw,Maine Coon,Cat,76%,images/ziw.jpg
+Misty,Bengal,Cat,75%,images/misty.jpg
+Luna,Ragdoll,Cat,75%,images/luna.jpg
+Ginger,Shiba Inu,Dog,74%,images/ginger.jpg
+Dusty,Lop,Rabbit,72%,images/dusty.jpg
+Bubbles,Goldfish,Fish,69%,images/bubbles.jpg
+Blue,Guppy,Fish,69%,images/blue.jpg
+Shadow,Sphynx,Cat,68%,images/shadow.jpg
+Kiki,African Grey,Parrot,68%,images/kiki.jpg
+Sadie,Poodle,Dog,67%,images/sadie.jpg
 Benny,Basset Hound,Dog,67%,images/benny.jpg
-Buddy,Labrador,Dog,65%,images/buddy.jpg
-Sadie,Poodle,Dog,62%,images/sadie.jpg
+Charlie,Golden Retriever,Dog,66%,images/charlie.jpg
+Tango,Parakeet,Parrot,65%,images/tango.jpg
+Loki,Oriental Shorthair,Cat,64%,images/loki.jpg
+Milo,Siamese,Cat,64%,images/milo.jpg
+Coop,Chihuahua,Dog,58%,images/coop.jpg
+Cooper,Beagle,Dog,58%,images/cooper.jpg
+Buddy,Labrador,Dog,56%,images/buddy.jpg
+Squeaky,Dumbo Rat,Rat,0%,images/squeaky.jpg
+Daisy,Bulldog,Dog,0%,images/daisy.jpg
+Penny,Peruvian,Guinea Pig,0%,images/penny.jpg
+Giz,Peruvian,Guinea Pig,0%,images/giz.jpg
+Peaches,Silkie,Guinea Pig,0%,images/peaches.jpg
+Zoe,Syrian Hamster,Hamster,0%,images/zoe.jpg
+Pumpkin,Winter White Hamster,Hamster,0%,images/pumpkin.jpg
+Shelly,American,Guinea Pig,0%,images/shelly.jpg
+Max,Rottweiler,Dog,0%,images/max.jpg
+Whiskers,Fancy Rat,Rat,0%,images/whiskers.jpg
+Rocky,Roborovski Hamster,Hamster,0%,images/rocky.jpg
+Peanut,Chinese Hamster,Hamster,0%,images/peanut.jpg
+Spiky,Doberman,Dog,0%,images/spiky.jpg
+Gizmo,Abyssinian,Guinea Pig,0%,images/gizmo.jpg
+Rock,Roborovski Hamster,Hamster,0%,images/rock.jpg
