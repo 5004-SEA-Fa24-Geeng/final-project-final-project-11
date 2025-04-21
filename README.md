@@ -4,7 +4,7 @@
 # Final Project for CS 5004 – PetForU
 
 ## Team Members
-- **Hao Chen** – 
+- **Hao Chen** – https://github.com/5004-SEA-Fa24-Geeng/hello-world-chenhbb8
 - **Wenxuan Yang** – 
 - **Shiqi Yang** – 
 - **Yifan Tian** – 
