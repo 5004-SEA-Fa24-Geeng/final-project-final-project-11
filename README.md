@@ -12,6 +12,13 @@
 ## Application Name
 **PetForU** – A personalized pet matching system that recommends the most compatible pets based on user lifestyle factors and MBTI personality compatibility.
 
+## Features
+- Be able to load in lists of items / previously saved lists, and modify them.
+- Be able to search for items in the collection
+- Be able to sort items in the collection
+- Be able to filter items in the collection
+- Include images for items
+
 ## Description
 PetForU is a Java console application that collects user preferences via an interactive questionnaire (MBTI type, energy level, space, budget, allergies, time availability, etc.), computes a compatibility score for each pet in a curated database, and provides:
 - A single “best match” recommendation
